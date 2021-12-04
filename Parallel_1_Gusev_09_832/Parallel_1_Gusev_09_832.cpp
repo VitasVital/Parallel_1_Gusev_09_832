@@ -6,31 +6,33 @@
 
 using namespace std;
 
-void task_1_consistent(int N) //последовательная реализация
+void task_1_consistent(int n) //последовательная реализация
 {
-    int* array = new int[N];
+    cout << "Последовательная реализация" << endl;
+    int* array = new int[n];
     cout << endl << "Инициализированный массив" << endl;
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         array[i] = i + 1;
         cout << array[i] << endl;
     }
 
     cout << endl << "Массив с частичными суммами" << endl;
-    for (int i = 1; i < N; i++)
+    for (int i = 1; i < n; i++)
     {
         array[i] += array[i - 1];
     }
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         cout << array[i] << endl;
     }
     delete[] array;
 }
 
-void task_1_OMP(int N, int num_all_threads)
+void task_1_OMP(int n, int num_all_threads)
 {
-    int* array = new int[N];
+    cout << "Параллельная реализация" << endl;
+    int* array = new int[n];
     bool* array_summed = new bool[num_all_threads];
     bool* array_last = new bool[num_all_threads];
     for (int i = 0; i < num_all_threads; i++)
@@ -40,7 +42,7 @@ void task_1_OMP(int N, int num_all_threads)
     }
 
     cout << endl << "Инициализированный массив" << endl;
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         array[i] = i + 1;
         cout << array[i] << endl;
@@ -51,8 +53,8 @@ void task_1_OMP(int N, int num_all_threads)
     {
         int thread_num = omp_get_thread_num(); //номер потока
 
-        int N_for_thread = N / (num_all_threads - 1); //количество элементов на каждый поток
-        for (int i = N_for_thread * thread_num + 1; i < N_for_thread * (thread_num + 1) and i < N; i++) //поток суммирует свою часть
+        int N_for_thread = n / (num_all_threads - 1); //количество элементов на каждый поток
+        for (int i = N_for_thread * thread_num + 1; i < N_for_thread * (thread_num + 1) and i < n; i++) //поток суммирует свою часть
         {
             array[i] += array[i - 1];
         }
@@ -73,7 +75,7 @@ void task_1_OMP(int N, int num_all_threads)
                     int start_i = N_for_thread * (thread_num + 1) - 1; //начинает суммировать с последнего элемента массива потока
                     if (thread_num == num_all_threads - 1) //если поток последний, то начинать с конца массива array
                     {
-                        start_i = N - 1;
+                        start_i = n - 1;
                     }
                     for (int i = start_i; i > index_last_element; i--)
                     {
@@ -86,26 +88,26 @@ void task_1_OMP(int N, int num_all_threads)
         }
     }
     
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
     {
         cout << array[i] << endl;
     }
     delete[] array;
 }
 
-void task_2_consistent(int N) //последовательная реализация
+void task_2_consistent(int n) //последовательная реализация
 {
-    int* array = new int[N];
-    for (int i = 1; i < N; i++)
+    int* array = new int[n];
+    for (int i = 1; i < n; i++)
     {
         array[i] += array[i - 1];
     }
     delete[] array;
 }
 
-void task_2_OMP(int N, int num_all_threads)
+void task_2_OMP(int n, int num_all_threads)
 {
-    int* array = new int[N];
+    int* array = new int[n];
     bool* array_summed = new bool[num_all_threads];
     bool* array_last = new bool[num_all_threads];
     for (int i = 0; i < num_all_threads; i++)
@@ -118,8 +120,8 @@ void task_2_OMP(int N, int num_all_threads)
     {
         int thread_num = omp_get_thread_num(); //номер потока
 
-        int N_for_thread = N / (num_all_threads - 1); //количество элементов на каждый поток
-        for (int i = N_for_thread * thread_num + 1; i < N_for_thread * (thread_num + 1) and i < N; i++) //поток суммирует свою часть
+        int N_for_thread = n / (num_all_threads - 1); //количество элементов на каждый поток
+        for (int i = N_for_thread * thread_num + 1; i < N_for_thread * (thread_num + 1) and i < n; i++) //поток суммирует свою часть
         {
             array[i] += array[i - 1];
         }
@@ -140,7 +142,7 @@ void task_2_OMP(int N, int num_all_threads)
                     int start_i = N_for_thread * (thread_num + 1) - 1; //начинает суммировать с последнего элемента массива потока
                     if (thread_num == num_all_threads - 1) //если поток последний, то начинать с конца массива array
                     {
-                        start_i = N - 1;
+                        start_i = n - 1;
                     }
                     for (int i = start_i; i > index_last_element; i--)
                     {
@@ -190,7 +192,7 @@ void task_2(int num_all_threads)
 	}
 }
 
-void task_3(int N, int n, int num_all_threads)
+void task_3(int n, int num_all_threads)
 {
     int M;
     ifstream file("task_2_M.txt");
@@ -199,14 +201,36 @@ void task_3(int N, int n, int num_all_threads)
     if (n >= M)
     {
         cout << "Вычисляется параллельно" << endl;
-        task_1_OMP(N, num_all_threads);
+        task_1_OMP(n, num_all_threads);
         cout << "Вычисляется параллельно" << endl;
     }
     else
     {
         cout << "Вычисляется последовательно" << endl;
-        task_1_consistent(N);
+        task_1_consistent(n);
         cout << "Вычисляется последовательно" << endl;
+    }
+}
+
+void task_4(int num_all_threads)
+{
+    int M;
+    ifstream file("task_2_M.txt");
+    file >> M;
+    
+    int N = M * 2;
+    cout << "N = " << N << endl;
+
+    unsigned int start_time_OMP;
+    unsigned int end_time_OMP;
+    unsigned int search_time_OMP;
+    for (int i = 2; i <= num_all_threads; i++)
+    {
+        start_time_OMP = clock();
+        task_2_OMP(N, i);
+        end_time_OMP = clock();
+        search_time_OMP = end_time_OMP - start_time_OMP;
+        cout << "Thread count = " << i << " time = " << search_time_OMP << endl;
     }
 }
 
@@ -215,12 +239,13 @@ int main()
     setlocale(LC_CTYPE, "Russian");
     int num_all_threads = 8; //указать количество потоков
 
-    int N = 100;
-    //task_1_consistent(N);
-    //task_1_OMP(N, num_all_threads);
+    int n = 1000;
+    //task_1_consistent(n);
+	//task_1_OMP(n, num_all_threads);
 
     //task_2(num_all_threads);
+    
+    //task_3(n, num_all_threads);
 
-    int n_task_3 = 500;
-    task_3(N, n_task_3, num_all_threads);
+    task_4(num_all_threads);
 }
