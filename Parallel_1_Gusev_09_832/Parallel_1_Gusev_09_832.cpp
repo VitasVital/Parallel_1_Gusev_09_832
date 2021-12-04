@@ -2,6 +2,7 @@
 #include <omp.h>
 #include <random>
 #include <ctime>
+#include <fstream>
 
 using namespace std;
 
@@ -170,11 +171,34 @@ void task_2()
         search_time_OMP = end_time_OMP - start_time_OMP;
         if (search_time_OMP < search_time_consistent)
         {
-            cout << M << endl;
+            cout << "M = " << M << endl;
+            ofstream fout("task_2_M.txt"); // создаём объект класса ofstream для записи и связываем его с файлом cppstudio.txt
+            fout << M; // запись строки в файл
+            fout.close(); // закрываем файл
+            
             break;
         }
         M += 1;
 	}
+}
+
+void task_3(int n)
+{
+    int M;
+    ifstream file("task_2_M.txt");
+    file >> M;
+
+    int N = 100;
+    if (n >= M)
+    {
+        cout << "Вычисляется параллельно" << endl;
+        task_1_OMP(N);
+    }
+    else
+    {
+        cout << "Вычисляется последовательно" << endl;
+        task_1_consistent(N);
+    }
 }
 
 int main()
@@ -183,5 +207,8 @@ int main()
     
     //task_1_consistent(100);
     //task_1_OMP(100);
+
     task_2();
+
+    task_3(500);
 }
