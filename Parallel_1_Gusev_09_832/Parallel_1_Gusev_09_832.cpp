@@ -28,12 +28,16 @@ void task_1_consistent(int N) //последовательна€ реализаци€
     delete[] array;
 }
 
-void task_1_OMP(int N)
+void task_1_OMP(int N, int num_all_threads)
 {
     int* array = new int[N];
-    const int num_all_threads = 4; //нужно указать количество потоков
-    bool array_summed[num_all_threads] = { false }; //завершил ли каждый поток подсчЄт
-    bool array_last[num_all_threads] = { false }; //заполнил ли последний элемент поток
+    bool* array_summed = new bool[num_all_threads];
+    bool* array_last = new bool[num_all_threads];
+    for (int i = 0; i < num_all_threads; i++)
+    {
+        array_summed[i] = false;
+        array_last[i] = false;
+    }
 
     cout << endl << "»нициализированный массив" << endl;
     for (int i = 0; i < N; i++)
@@ -99,12 +103,16 @@ void task_2_consistent(int N) //последовательна€ реализаци€
     delete[] array;
 }
 
-void task_2_OMP(int N)
+void task_2_OMP(int N, int num_all_threads)
 {
     int* array = new int[N];
-    const int num_all_threads = 4; //нужно указать количество потоков
-    bool array_summed[num_all_threads] = { false }; //завершил ли каждый поток подсчЄт
-    bool array_last[num_all_threads] = { false }; //заполнил ли последний элемент поток
+    bool* array_summed = new bool[num_all_threads];
+    bool* array_last = new bool[num_all_threads];
+    for (int i = 0; i < num_all_threads; i++)
+    {
+        array_summed[i] = false;
+        array_last[i] = false;
+    }
     
 #pragma omp parallel shared(array_last) num_threads(num_all_threads)
     {
@@ -148,7 +156,7 @@ void task_2_OMP(int N)
     delete[] array;
 }
 
-void task_2()
+void task_2(int num_all_threads)
 {
     int M = 10;
     unsigned int start_time_consistent;
@@ -166,7 +174,7 @@ void task_2()
         search_time_consistent = end_time_consistent - start_time_consistent;
 
         start_time_OMP = clock();
-        task_2_OMP(M);
+        task_2_OMP(M, num_all_threads);
         end_time_OMP = clock();
         search_time_OMP = end_time_OMP - start_time_OMP;
         if (search_time_OMP < search_time_consistent)
@@ -182,33 +190,37 @@ void task_2()
 	}
 }
 
-void task_3(int n)
+void task_3(int N, int n, int num_all_threads)
 {
     int M;
     ifstream file("task_2_M.txt");
     file >> M;
-
-    int N = 100;
+    
     if (n >= M)
     {
         cout << "¬ычисл€етс€ параллельно" << endl;
-        task_1_OMP(N);
+        task_1_OMP(N, num_all_threads);
+        cout << "¬ычисл€етс€ параллельно" << endl;
     }
     else
     {
         cout << "¬ычисл€етс€ последовательно" << endl;
         task_1_consistent(N);
+        cout << "¬ычисл€етс€ последовательно" << endl;
     }
 }
 
 int main()
 {
     setlocale(LC_CTYPE, "Russian");
-    
-    //task_1_consistent(100);
-    //task_1_OMP(100);
+    int num_all_threads = 8; //указать количество потоков
 
-    task_2();
+    int N = 100;
+    //task_1_consistent(N);
+    //task_1_OMP(N, num_all_threads);
 
-    task_3(500);
+    //task_2(num_all_threads);
+
+    int n_task_3 = 500;
+    task_3(N, n_task_3, num_all_threads);
 }
