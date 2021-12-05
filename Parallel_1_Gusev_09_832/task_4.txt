@@ -1,0 +1,9 @@
+M = 227
+N = 454
+Thread count = 2 time = 1
+Thread count = 3 time = 2
+Thread count = 4 time = 4
+Thread count = 5 time = 4
+Thread count = 6 time = 4
+Thread count = 7 time = 5
+Thread count = 8 time = 6

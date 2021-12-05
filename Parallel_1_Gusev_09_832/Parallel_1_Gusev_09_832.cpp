@@ -4,6 +4,7 @@
 #include <ctime>
 #include <fstream>
 
+
 using namespace std;
 
 void task_1_consistent(int n) //последовательная реализация
@@ -224,28 +225,45 @@ void task_4(int num_all_threads)
     unsigned int start_time_OMP;
     unsigned int end_time_OMP;
     unsigned int search_time_OMP;
+
+    int* array_x = new int[num_all_threads];
+    int* array_M = new int[num_all_threads];
+    for (int i = 0; i < num_all_threads; i++)
+    {
+        array_M[i] = 0;
+        array_x[i] = i;
+    }
+
+    ofstream fout("task_4.txt"); // создаём объект класса ofstream для записи и связываем его с файлом cppstudio.txt
+    fout << "M = " << M << endl;
+	fout << "N = " << N << endl;
     for (int i = 2; i <= num_all_threads; i++)
     {
         start_time_OMP = clock();
         task_2_OMP(N, i);
         end_time_OMP = clock();
         search_time_OMP = end_time_OMP - start_time_OMP;
+        array_M[i] = search_time_OMP;
         cout << "Thread count = " << i << " time = " << search_time_OMP << endl;
+        
+        fout << "Thread count = " << i << " time = " << search_time_OMP << endl; // запись строки в файл
     }
+    fout.close(); // закрываем файл
 }
 
 int main()
 {
     setlocale(LC_CTYPE, "Russian");
-    int num_all_threads = 8; //указать количество потоков
+    int num_all_threads = 8; //указать количество потоков в ПК
 
     int n = 1000;
     //task_1_consistent(n);
 	//task_1_OMP(n, num_all_threads);
 
-    //task_2(num_all_threads);
+    task_2(num_all_threads);
     
     //task_3(n, num_all_threads);
 
     task_4(num_all_threads);
+    
 }
